@@ -355,10 +355,12 @@ def generate_reports():
     total_task = len(task_list)
     completed_task = 0
     overdue_task = 0
+    users_in_task_list = []
     
     overview_table = PrettyTable(["Total Task", "Completed Task", "Uncompleted Task",
                                   "Uncompleted(%)", "Overdue Task", "Overdue(%)"])
-    user_table = PrettyTable(["User", "User Task Qty", "Total Task(%)", "User Progress(%)"])
+    user_table = PrettyTable(["User", "Total Task Qty", "Task Ratio(%)", "Completion Ratio(%)",
+                              "Uncompletion Ratio(%)", "Overdue Ratio(%)"])
     
     for user in users.keys():
         """
@@ -368,23 +370,37 @@ def generate_reports():
         """
         user_task = 0
         user_completed_task = 0
+        user_overdue_task = 0
         for task in task_list:
             if user == task ["username"]:
                 user_task += 1
+                if not user in users_in_task_list:
+                    users_in_task_list.append(user) 
                 if task ["completed"]:
                     user_completed_task += 1
                     completed_task += 1
                 else:
                     if today_date > task ["due_date"] and task ["completed"] == False:
+                        user_overdue_task += 1
                         overdue_task += 1
+
             # An error handling if the user is in the 'user.txt' file but no task has been assigned.           
             try: 
                 user_progress = round(100 * user_completed_task / user_task, 1)
             except ZeroDivisionError:
                 user_progress = 0
+            # An error handling if the user has completed all tasks.
+            try:
+                overdue_progress = round(100 * overdue_task / (total_task-completed_task))
+            except ZeroDivisionError:
+                overdue_progress = 0
+            
+                      
         #adding user's details to the 'user overview table'
-        user_table.add_row([user, user_task, round(100 * user_task / total_task, 1),
-                            user_progress])
+        user_table.add_row([user, user_task, 
+                            round(100 * user_task / total_task, 1),
+                            user_progress, 100-user_progress, 
+                            overdue_progress])
     #adding task summary to the 'task overview table'   
     overview_table.add_row([total_task, completed_task, total_task-completed_task,
                             round(100 * (total_task-completed_task) / total_task, 1 ),
@@ -398,6 +414,7 @@ def generate_reports():
       
     #coverting table to string and store in a "user_overview.txt" file
     user_string = user_table.get_string()
+    user_string += f"\nTotal Tasks:\t{total_task}\nTotal Task Users:\t{len(users_in_task_list)}"
     with open("user_overview.txt", "w") as user_file:
         user_file.write(user_string)
     
