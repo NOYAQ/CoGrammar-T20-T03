@@ -419,7 +419,26 @@ def generate_reports():
         user_file.write(user_string)
     
     print ("*" * 50 + "\nTask & Overview reports have been generated\n" + "*" * 50)           
-            
+def login()  :        
+    logged_in = False
+    while not logged_in:
+        """
+        checks username and password if it doesn't match then sends warning messages
+        
+        """
+        print("LOGIN")
+        curr_user = input("Username: ").lower()
+        curr_pass = input("Password: ")
+        if curr_user not in username_password.keys():
+            print("User does not exist")
+            continue
+        elif username_password[curr_user] != curr_pass:
+            print("Wrong password")
+            continue
+        else:
+            print("Login Successful!")
+            logged_in = True
+    return curr_user
         
         
 #=====importing libraries===========
@@ -435,24 +454,8 @@ task_list = get_task_list()
 # get users and their passwords from the function.
 username_password  = get_users_detail()
 
-logged_in = False
-while not logged_in:
-    """
-    checks username and password if it doesn't match then sends warning messages
-    
-    """
-    print("LOGIN")
-    curr_user = input("Username: ").lower()
-    curr_pass = input("Password: ")
-    if curr_user not in username_password.keys():
-        print("User does not exist")
-        continue
-    elif username_password[curr_user] != curr_pass:
-        print("Wrong password")
-        continue
-    else:
-        print("Login Successful!")
-        logged_in = True
+# login
+curr_user = login()
 
 while True:
     # if the current user is 'admin' then shows gr - Generate reports & ds- Display statistic options
