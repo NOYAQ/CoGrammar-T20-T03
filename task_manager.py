@@ -12,7 +12,7 @@ def get_tasks():
     If the file doesn't exist, it creates a 'tasks.txt' file and writes 'INITIAL TASK' 
     returns the tasks
     """
-    INITIAL_TASK = "admin;Add functionality to task manager;Add additional options and refactor the code.;2022-12-01;2022-11-22;No"
+    INITIAL_TASK = "admin;Add functionality to task manager;Add additional options and refactor the code.;2030-12-01;2022-11-22;Yes"
     try:
         with open("tasks.txt", 'r') as task_file:
             task_data = task_file.read().split("\n")
@@ -375,7 +375,7 @@ def generate_reports():
                     user_completed_task += 1
                     completed_task += 1
                 else:
-                    if today_date > task ["due_date"]:
+                    if today_date > task ["due_date"] and task ["completed"] == False:
                         overdue_task += 1
             # An error handling if the user is in the 'user.txt' file but no task has been assigned.           
             try: 
